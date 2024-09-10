@@ -15,7 +15,7 @@
     // Load ONNX model
     async function loadModel() {
       const session = new onnx.InferenceSession();
-      await session.loadModel('path-to-your-onnx-model/model.onnx');  // Update the path to your ONNX model
+      await session.loadModel('model.onnx'); 
       return session;
     }
 
