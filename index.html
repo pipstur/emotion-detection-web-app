@@ -43,12 +43,26 @@
       console.log(outputTensor);
     }
 
-    // Main loop
     async function run() {
-      const session = await loadModel();
-      await setupWebcam();
-      setInterval(() => detectEmotion(session), 100);  // Detect emotion every 100ms
+    try {
+      const session = await loadModel();  // Load the ONNX model
+      console.log('Model loaded successfully');
+      
+      await setupWebcam();  // Setup webcam for video streaming
+      console.log('Webcam setup complete');
+      
+      setInterval(() => {
+        try {
+          detectEmotion(session);  // Run the emotion detection function
+        } catch (error) {
+          console.error('Error during emotion detection:', error);
+        }
+      }, 100);  // Run detection every 100ms
+      
+    } catch (error) {
+      console.error('Error in main loop:', error);
     }
+  }
 
     run();
   </script>
