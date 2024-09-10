@@ -15,7 +15,7 @@
     // Load ONNX model with ONNX Runtime Web
     async function loadModel() {
       try {
-        const session = await ort.InferenceSession.create('path-to-your-onnx-model/model.onnx');
+        const session = await ort.InferenceSession.create('model.onnx');
         console.log('Model loaded:', session);
         return session;
       } catch (error) {
