@@ -14,19 +14,32 @@
 
     // Load ONNX model with ONNX Runtime Web
     async function loadModel() {
-      const session = await ort.InferenceSession.create('model.onnx');
-      return session;
+      try {
+        const session = await ort.InferenceSession.create('path-to-your-onnx-model/model.onnx');
+        console.log('Model loaded:', session);
+        return session;
+      } catch (error) {
+        console.error('Error loading model:', error);
+        throw error;  // Re-throw to propagate the error
+      }
     }
+
 
     // Setup the webcam
     async function setupWebcam() {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-      video.srcObject = stream;
-      return new Promise((resolve) => {
-        video.onloadedmetadata = () => {
-          resolve(video);
-        };
-      });
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        video.srcObject = stream;
+        console.log('Webcam initialized');
+        return new Promise((resolve) => {
+          video.onloadedmetadata = () => {
+            resolve(video);
+          };
+        });
+      } catch (error) {
+        console.error('Error setting up webcam:', error);
+        throw error;  // Re-throw to propagate the error
+      }
     }
 
     // Run emotion detection using the model
