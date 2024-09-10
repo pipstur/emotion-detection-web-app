@@ -1,0 +1,57 @@
+<html>
+<head>
+  <title>Real-Time Emotion Detection</title>
+  <script src="https://cdn.jsdelivr.net/npm/onnxjs/dist/onnx.min.js"></script>
+</head>
+<body>
+  <h1>Emotion Detection</h1>
+  <video id="webcam" autoplay></video>
+  <canvas id="output"></canvas>
+  <script>
+    const video = document.getElementById('webcam');
+    const canvas = document.getElementById('output');
+    const context = canvas.getContext('2d');
+
+    // Load ONNX model
+    async function loadModel() {
+      const session = new onnx.InferenceSession();
+      await session.loadModel('path-to-your-onnx-model/model.onnx');  // Update the path to your ONNX model
+      return session;
+    }
+
+    // Setup the webcam
+    async function setupWebcam() {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      video.srcObject = stream;
+      return new Promise((resolve) => {
+        video.onloadedmetadata = () => {
+          resolve(video);
+        };
+      });
+    }
+
+    // Run emotion detection using the model
+    async function detectEmotion(session) {
+      context.drawImage(video, 0, 0, canvas.width, canvas.height);
+      const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+      const input = new onnx.Tensor(new Float32Array(imageData.data), 'float32', [1, 3, 80, 80]);
+
+      // Run the model with the input tensor
+      const outputMap = await session.run([input]);
+      const outputTensor = outputMap.values().next().value;
+
+      // Handle the output here (e.g., display the detected emotion)
+      console.log(outputTensor);
+    }
+
+    // Main loop
+    async function run() {
+      const session = await loadModel();
+      await setupWebcam();
+      setInterval(() => detectEmotion(session), 100);  // Detect emotion every 100ms
+    }
+
+    run();
+  </script>
+</body>
+</html>
